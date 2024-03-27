@@ -1,3 +1,4 @@
+import { where } from "sequelize"
 import { Course } from "../models"
 
 export const courseService = {
@@ -12,5 +13,16 @@ export const courseService = {
             }
         })
         return courseWithEpisodes
+    },
+    getRandomFeaturedCourses: async () => {
+        const featuredCourses = await Course.findAll({
+            attributes: ['id', 'name', 'synopsis', ['thumbnail_url', 'thumbnailUrl']],
+            where: {
+                featured: true
+            }
+        })
+        const topThree = featuredCourses.sort(() => 0.5 - Math.random())
+
+        return topThree.slice(0, 3)
     }
 }
