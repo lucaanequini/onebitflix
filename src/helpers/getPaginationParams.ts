@@ -9,5 +9,5 @@ export function getPaginationParams(query: any): [page: number, perPage: number]
         ? parseInt(page, 10)
         : 1
 
-    return ([page, perPage])
+    return ([pageNumber, perPageNumber])
 }
