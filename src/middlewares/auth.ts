@@ -14,12 +14,27 @@ export function ensureAuth(req: AuthenticatedRequest, res: Response, next: NextF
     if (!authorizationHeader) return res.status(401).json({ message: 'Unauthorized: No tokens were found' })
 
     const token = authorizationHeader.replace(/Bearer /, '')
-    jwtService.verifyToken(token, (error, decoded) => {
+    jwtService.verifyToken(token, async (error, decoded) => {
         if (error || typeof decoded == 'undefined') return res.status(401).json({ message: 'Unauthorized: invalid token' })
 
-        userService.findByEmail((decoded as JwtPayload).email).then(user => {
-            req.user = user
-            next()
-        })
+        const user = await userService.findByEmail((decoded as JwtPayload).email)
+        req.user = user
+        next()
+    })
+}
+
+export function ensureAuthByQuery(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    const { token } = req.query
+
+    if (!token) return res.status(401).json({ message: 'Unauthorized: No tokens were found' })
+
+    if (typeof token !== 'string') return res.status(400).json({ message: 'Token is not a string' })
+
+    jwtService.verifyToken(token, async (error, decoded) => {
+        if (error || typeof decoded === 'undefined') return res.status(401).json({ message: 'Unauthorized: invalid token' })
+
+        const user = await userService.findByEmail((decoded as JwtPayload).email)
+        req.user = user
+        next()
     })
 }
