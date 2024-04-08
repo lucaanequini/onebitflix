@@ -10,9 +10,21 @@ export const usersController = {
         try {
             const watching = await userService.getKeepWatchingList(id)
             return res.json(watching)
-        } catch (err) {
-            if (err instanceof Error) {
-                return res.status(400).json({ message: err.message })
+        } catch (error) {
+            if (error instanceof Error) {
+                return res.status(400).json({ message: error.message })
+            }
+        }
+    },
+    //GET /users/current
+    show: async (req: AuthenticatedRequest, res: Response) => {
+        const user = req.user!
+
+        try {
+            return res.status(200).json(user)
+        } catch (error) {
+            if (error instanceof Error) {
+                return res.status(400).json({ message: error.message })
             }
         }
     }
