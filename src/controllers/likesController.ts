@@ -20,7 +20,8 @@ export const likesController = {
     // DELETE /likes/:id
     remove: async (req: AuthenticatedRequest, res: Response) => {
         const userId = req.user!.id
-        const { courseId } = req.body
+        const courseId = req.params.id
+        console.log(courseId)
 
         try {
             await likeService.remove(userId, Number(courseId))
